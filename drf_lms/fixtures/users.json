@@ -1,0 +1,20 @@
+[
+  {
+    "model": "users.customuser",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$260000$example$hashvalue",
+      "last_login": null,
+      "is_superuser": false,
+      "email": "user1@example.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2024-01-01T00:00:00Z",
+      "phone": "1234567890",
+      "city": "Moscow",
+      "avatar": null,
+      "groups": [],
+      "user_permissions": []
+    }
+  }
+]

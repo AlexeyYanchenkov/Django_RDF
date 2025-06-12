@@ -1,8 +1,27 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.contrib.auth.base_user import BaseUserManager
+from django.conf import settings
+from materials.models import Course, Lesson
 
-# Менеджер пользователя (обязательно для кастомной модели без username)
+# Модель платежа
+class Payment(models.Model):
+    PAYMENT_CHOICES = [
+        ('cash', 'Наличные'),
+        ('transfer', 'Перевод на счёт'),
+    ]
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    payment_date = models.DateTimeField(auto_now_add=True)
+    course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, blank=True)
+    lesson = models.ForeignKey(Lesson, on_delete=models.SET_NULL, null=True, blank=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_method = models.CharField(max_length=10, choices=PAYMENT_CHOICES)
+
+    def __str__(self):
+        return f"Платёж от {self.user.email} на сумму {self.amount}"
+
+# Менеджер пользователя
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
@@ -27,16 +46,16 @@ class CustomUserManager(BaseUserManager):
 
 # Кастомная модель пользователя
 class CustomUser(AbstractUser):
-    username = None  # Убираем username
-    email = models.EmailField(unique=True)  # Делаем email уникальным
+    username = None
+    email = models.EmailField(unique=True)
     phone = models.CharField(max_length=20, blank=True)
     city = models.CharField(max_length=100, blank=True)
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []  # Убираем username из обязательных
+    REQUIRED_FIELDS = []
 
-    objects = CustomUserManager()  # Используем свой менеджер
+    objects = CustomUserManager()
 
     def __str__(self):
         return self.email
