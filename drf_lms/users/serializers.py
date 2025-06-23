@@ -10,9 +10,6 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
 
 class PaymentSerializer(serializers.ModelSerializer):
-    course = CourseSerializer(read_only=True)
-    lesson = LessonSerializer(read_only=True)
-
     class Meta:
         model = Payment
         fields = [
@@ -20,6 +17,7 @@ class PaymentSerializer(serializers.ModelSerializer):
             'course', 'lesson',
             'amount', 'payment_method'
         ]
+        read_only_fields = ['id', 'user', 'payment_date']
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

@@ -9,6 +9,7 @@ class Payment(models.Model):
     PAYMENT_CHOICES = [
         ('cash', 'Наличные'),
         ('transfer', 'Перевод на счёт'),
+        ('card', 'Оплата картой'),
     ]
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -17,6 +18,8 @@ class Payment(models.Model):
     lesson = models.ForeignKey(Lesson, on_delete=models.SET_NULL, null=True, blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_method = models.CharField(max_length=10, choices=PAYMENT_CHOICES)
+
+    stripe_session_url = models.URLField(null=True, blank=True)
 
     def __str__(self):
         return f"Платёж от {self.user.email} на сумму {self.amount}"

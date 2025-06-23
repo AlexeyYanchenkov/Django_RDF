@@ -1,5 +1,7 @@
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
+from users.models import Payment
 from .models import Course, Lesson, Subscription
 from .serializers import CourseSerializer, LessonSerializer, SubscriptionSerializer
 from .permissions import IsModerator, IsOwner
@@ -7,6 +9,43 @@ from rest_framework import generics, permissions, status
 from .paginators import StandardResultsSetPagination
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from services.stripe import create_stripe_product, create_stripe_price, create_stripe_session
+
+
+class CreateStripePaymentView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        course_id = request.data.get("course_id")
+        try:
+            course = Course.objects.get(id=course_id)
+        except Course.DoesNotExist:
+            return Response({"error": "Курс не найден"}, status=404)
+
+        # Создаём продукт
+        product_id = create_stripe_product(course.name)
+
+        # Создаём цену
+        price_id = create_stripe_price(product_id, float(course.price))
+
+        # Создаём платёжную сессию
+        success_url = "http://localhost:8000/success/"
+        cancel_url = "http://localhost:8000/cancel/"
+        session_url = create_stripe_session(price_id, success_url, cancel_url)
+
+        # Сохраняем платёж
+        payment = Payment.objects.create(
+            user=request.user,
+            course=course,
+            amount=course.price,
+            payment_method='card',
+            stripe_session_url=session_url
+        )
+
+        return Response({
+            "payment_id": payment.id,
+            "stripe_url": session_url
+        })
 
 
 class CourseViewSet(ModelViewSet):
@@ -61,6 +100,3 @@ class SubscriptionViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-
-
-

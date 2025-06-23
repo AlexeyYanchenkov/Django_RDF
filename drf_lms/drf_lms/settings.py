@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
+    'drf_yasg',
     'users',
     'materials',
 ]
@@ -142,3 +144,17 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ]
 }
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+            'description': 'JWT token using Bearer scheme. Example: "Bearer <your_token>"',
+        }
+    },
+}
+
+STRIPE_SECRET_KEY = 'sk_test_51RdFp8PEbjloluxZh4M7EHoa9Ot2F2aBam4vhra28iuvFB93vH9LjffesAyEVeOgOjk2BqanbN7P0Itlbzs00mk700L6jnSp2U'  # из личного кабинета Stripe
+STRIPE_PUBLIC_KEY = 'pk_test_51RdFp8PEbjloluxZpiwUXDz5bbFGc8rehUmJBxxZ2EYoweRNOo3yo85TTmCnRZvSyZEBklLmS6YRIKDhWqEAisLu00WtKILwv8'
