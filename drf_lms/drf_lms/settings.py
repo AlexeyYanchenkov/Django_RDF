@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -156,5 +156,5 @@ SWAGGER_SETTINGS = {
     },
 }
 
-STRIPE_SECRET_KEY = 'sk_test_51RdFp8PEbjloluxZh4M7EHoa9Ot2F2aBam4vhra28iuvFB93vH9LjffesAyEVeOgOjk2BqanbN7P0Itlbzs00mk700L6jnSp2U'  # из личного кабинета Stripe
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")  
 STRIPE_PUBLIC_KEY = 'pk_test_51RdFp8PEbjloluxZpiwUXDz5bbFGc8rehUmJBxxZ2EYoweRNOo3yo85TTmCnRZvSyZEBklLmS6YRIKDhWqEAisLu00WtKILwv8'
