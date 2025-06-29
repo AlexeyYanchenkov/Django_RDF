@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'drf_yasg',
+    'django_celery_beat',
     'users',
     'materials',
 ]
@@ -158,3 +159,23 @@ SWAGGER_SETTINGS = {
 
 STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")  
 STRIPE_PUBLIC_KEY = 'pk_test_51RdFp8PEbjloluxZpiwUXDz5bbFGc8rehUmJBxxZ2EYoweRNOo3yo85TTmCnRZvSyZEBklLmS6YRIKDhWqEAisLu00WtKILwv8'
+
+# Redis
+REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')
+REDIS_PORT = os.getenv('REDIS_PORT', '6379')
+
+# Celery
+CELERY_BROKER_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}/0'
+CELERY_RESULT_BACKEND = CELERY_BROKER_URL
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.yandex.ru"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "clickandgo1346@yandex.ru")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "lqecgcnznkukdvwc")
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

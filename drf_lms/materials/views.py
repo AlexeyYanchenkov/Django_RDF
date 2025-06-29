@@ -1,3 +1,5 @@
+from datetime import timedelta
+from django.utils.timezone import now
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
@@ -10,6 +12,7 @@ from .paginators import StandardResultsSetPagination
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from services.stripe import create_stripe_product, create_stripe_price, create_stripe_session
+from .tasks import send_course_update_email
 
 
 class CreateStripePaymentView(APIView):
@@ -75,6 +78,18 @@ class CourseViewSet(ModelViewSet):
         course = self.get_object()
         Subscription.objects.filter(user=request.user, course=course).delete()
         return Response({'status': 'unsubscribed'}, status=status.HTTP_204_NO_CONTENT)
+
+    def update(self, request, send_course_update_email=None, *args, **kwargs):
+        course = self.get_object()
+        last_updated = course.updated_at
+
+        response = super().update(request, *args, **kwargs)
+
+        if now() - last_updated > timedelta(hours=4):
+            subscriptions = Subscription.objects.filter(course=course)
+            for sub in subscriptions:
+                user_email = sub.user.email
+                send_course_update_email.delay(user_email, course.title)
 
 class LessonViewSet(ModelViewSet):
     queryset = Lesson.objects.all()
