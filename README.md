@@ -35,4 +35,6 @@ sudo systemctl enable gunicorn
 sudo ln -s /etc/nginx/sites-available/myproject /etc/nginx/sites-enabled
 sudo nginx -t
 sudo systemctl restart nginx
+
+
 Готово! Приложение доступно по IP-адресу.
