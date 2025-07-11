@@ -2,7 +2,7 @@ name: Django CI/CD
 
 on:
   push:
-    branches: [ main ]  
+    branches: [ main ]
 
 jobs:
   test:
@@ -20,10 +20,11 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+      working-directory: drf_lms
 
     - name: Run tests
-      run: |
-        python manage.py test
+      run: python manage.py test
+      working-directory: drf_lms
 
   deploy:
     needs: test
@@ -40,7 +41,8 @@ jobs:
           cd /home/alexey-1408/Django_RDF
           git pull origin main
           source venv/bin/activate
-          pip install -r requirements.txt
+          pip install -r drf_lms/requirements.txt
+          cd drf_lms
           python manage.py migrate
           python manage.py collectstatic --noinput
           sudo systemctl restart gunicorn
