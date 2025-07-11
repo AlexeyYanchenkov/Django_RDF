@@ -1,9 +1,9 @@
 Деплой на сервер (Yandex Cloud)
 
-1. Установить зависимости:
-   ```bash
-   sudo apt update
-   sudo apt install python3-pip python3-venv nginx git
+Установить зависимости:
+
+sudo apt update
+sudo apt install python3-pip python3-venv nginx git
 
 
 Клонировать репозиторий:
