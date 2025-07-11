@@ -1,15 +1,38 @@
-1. Клонирование и подготовка
-   
-git clone https://github.com/AlexeyYanchenkov/Django_RDF.git
-cd Django_RDF
+Деплой на сервер (Yandex Cloud)
 
-2. Создание .env файла
+1. Установить зависимости:
+   ```bash
+   sudo apt update
+   sudo apt install python3-pip python3-venv nginx git
 
-Создать файл .env на основе .env.sample и добавить в него реальные значения:
-cp .env.sample .env
-Заполнить EMAIL_HOST_USER, EMAIL_HOST_PASSWORD и другие переменные.
 
-3. Сборка и запуск через Docker
+Клонировать репозиторий:
 
-docker compose build --no-cache
-docker compose up
+git clone git@github.com:AlexeyYanchenkov/Django_RDF.git
+
+
+Создать и активировать виртуальное окружение:
+
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+
+Настроить .env и переменные:
+
+DEBUG=1
+SECRET_KEY=...
+DJANGO_ALLOWED_HOSTS=89.169.xxx.xxx 127.0.0.1 localhost
+
+
+Настроить gunicorn:
+
+sudo systemctl start gunicorn
+sudo systemctl enable gunicorn
+
+
+Настроить nginx:
+
+sudo ln -s /etc/nginx/sites-available/myproject /etc/nginx/sites-enabled
+sudo nginx -t
+sudo systemctl restart nginx
+Готово! Приложение доступно по IP-адресу.
